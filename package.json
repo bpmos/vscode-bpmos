@@ -1,0 +1,19 @@
+{
+	"name": "bpmos",
+	"version": "0.1.0",
+	"publisher": "hoda5",
+	"engines": { "vscode": "*" },
+	"contributes": {
+		"languages": [{
+			"id": "bpmos",
+			"extensions": [ ".bpmos" ],
+			"aliases": [ "bpmos"],
+			"configuration": "./bpmos.configuration.json"
+		}],
+		"grammars": [{
+			"language": "bpmos",
+			"scopeName": "text.bpmos",
+			"path": "./syntaxes/bpmos.json"
+		}]
+	}
+}

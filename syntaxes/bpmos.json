@@ -1,0 +1,964 @@
+{
+	"fileTypes": [
+		"bpmos"
+	],
+	"name": "bpmos",
+	"patterns": [
+		{
+			"comment": "Doctype declaration.",
+			"match": "^(!!!|doctype)(\\s*[a-zA-Z0-9-_]+)?",
+			"name": "meta.tag.sgml.doctype.html"
+		},
+		{
+			"begin": "^(\\s*)//-",
+			"comment": "Unbuffered (bpmos-only) comments.",
+			"end": "^(?!(\\1\\s)|\\s*$)",
+			"name": "comment.unbuffered.block.bpmos"
+		},
+		{
+			"begin": "^(\\s*)//",
+			"comment": "Buffered (html) comments.",
+			"end": "^(?!(\\1\\s)|\\s*$)",
+			"name": "string.comment.buffered.block.bpmos",
+			"patterns": [
+				{
+					"captures": {
+						"1": {
+							"name": "invalid.illegal.comment.comment.block.bpmos"
+						}
+					},
+					"comment": "Buffered comments inside buffered comments will generate invalid html.",
+					"match": "^\\s*(//)(?!-)",
+					"name": "string.comment.buffered.block.bpmos"
+				}
+			]
+		},
+		{
+			"begin": "^(\\s*)-$",
+			"comment": "Unbuffered code block.",
+			"end": "^(?!(\\1\\s)|\\s*$)",
+			"name": "source.js",
+			"patterns": [
+				{
+					"include": "source.js"
+				}
+			]
+		},
+		{
+			"begin": "^(\\s*)(script)(?=[.#(\\s])((?![^\\n]*type=)|(?=[^\\n]*(text|application)/javascript))",
+			"beginCaptures": {
+				"2": {
+					"name": "entity.name.tag.script.bpmos"
+				}
+			},
+			"comment": "Script tag with JavaScript code.",
+			"end": "^(?!(\\1\\s)|\\s*$)",
+			"name": "meta.tag.other",
+			"patterns": [
+				{
+					"begin": "\\G(?=\\()",
+					"end": "$",
+					"name": "stuff.tag.script.bpmos",
+					"patterns": [
+						{
+							"include": "#tag_attributes"
+						}
+					]
+				},
+				{
+					"begin": "\\G(?=[.#])",
+					"end": "$",
+					"name": "stuff.tag.script.bpmos",
+					"patterns": [
+						{
+							"include": "#complete_tag"
+						}
+					]
+				},
+				{
+					"include": "source.js"
+				}
+			]
+		},
+		{
+			"begin": "^(\\s*)(style)((\\.$)|(?=[.#(].*\\.$))",
+			"beginCaptures": {
+				"2": {
+					"name": "entity.name.tag.script.bpmos"
+				}
+			},
+			"comment": "Style tag with CSS code.",
+			"end": "^(?!(\\1\\s)|\\s*$)",
+			"name": "meta.tag.other",
+			"patterns": [
+				{
+					"begin": "\\G(?=\\()",
+					"end": "$",
+					"name": "stuff.tag.style.bpmos",
+					"patterns": [
+						{
+							"include": "#tag_attributes"
+						}
+					]
+				},
+				{
+					"begin": "\\G(?=[.#])",
+					"end": "$",
+					"name": "stuff.tag.style.bpmos",
+					"patterns": [
+						{
+							"include": "#complete_tag"
+						}
+					]
+				},
+				{
+					"include": "source.css"
+				}
+			]
+		},
+		{
+			"begin": "^(\\s*):(sass)(?=\\(|$)",
+			"beginCaptures": {
+				"2": {
+					"name": "constant.language.name.sass.filter.bpmos"
+				}
+			},
+			"end": "^(?!(\\1\\s)|\\s*$)",
+			"name": "source.sass.filter.bpmos",
+			"patterns": [
+				{
+					"include": "#tag_attributes"
+				},
+				{
+					"include": "source.sass"
+				}
+			]
+		},
+		{
+			"begin": "^(\\s*):(less)(?=\\(|$)",
+			"beginCaptures": {
+				"2": {
+					"name": "constant.language.name.less.filter.bpmos"
+				}
+			},
+			"end": "^(?!(\\1\\s)|\\s*$)",
+			"name": "source.less.filter.bpmos",
+			"patterns": [
+				{
+					"include": "#tag_attributes"
+				},
+				{
+					"include": "source.less"
+				}
+			]
+		},
+		{
+			"begin": "^(\\s*):(stylus)(?=\\(|$)",
+			"beginCaptures": {
+				"2": {
+					"name": "constant.language.name.stylus.filter.bpmos"
+				}
+			},
+			"end": "^(?!(\\1\\s)|\\s*$)",
+			"patterns": [
+				{
+					"include": "#tag_attributes"
+				},
+				{
+					"include": "source.stylus"
+				}
+			]
+		},
+		{
+			"begin": "^(\\s*):(coffee(-?script)?)(?=\\(|$)",
+			"beginCaptures": {
+				"2": {
+					"name": "constant.language.name.coffeescript.filter.bpmos"
+				}
+			},
+			"end": "^(?!(\\1\\s)|\\s*$)",
+			"name": "source.coffeescript.filter.bpmos",
+			"patterns": [
+				{
+					"include": "#tag_attributes"
+				},
+				{
+					"include": "source.coffee"
+				}
+			]
+		},
+		{
+			"begin": "^(\\s*)((:(?=.))|(:$))",
+			"beginCaptures": {
+				"4": {
+					"name": "invalid.illegal.empty.generic.filter.bpmos"
+				}
+			},
+			"comment": "Generic bpmos filter.",
+			"end": "^(?!(\\1\\s)|\\s*$)",
+			"patterns": [
+				{
+					"begin": "\\G(?<=:)(?=.)",
+					"end": "$",
+					"name": "name.generic.filter.bpmos",
+					"patterns": [
+						{
+							"match": "\\G\\(",
+							"name": "invalid.illegal.name.generic.filter.bpmos"
+						},
+						{
+							"match": "[\\w-]",
+							"name": "constant.language.name.generic.filter.bpmos"
+						},
+						{
+							"include": "#tag_attributes"
+						},
+						{
+							"match": "\\W",
+							"name": "invalid.illegal.name.generic.filter.bpmos"
+						}
+					]
+				}
+			]
+		},
+		{
+			"begin": "^(\\s*)(?=[\\w.#].*?\\.$)(?=(?:(?:(?:(?:(?:#[\\w-]+)|(?:\\.[\\w-]+))|(?:(?:[#!]\\{[^}]*\\})|(?:\\w(?:(?:[\\w:-]+[\\w-])|(?:[\\w-]*)))))(?:(?:#[\\w-]+)|(?:\\.[\\w-]+)|(?:\\((?:[^()\\'\\\"]*(?:(?:\\'(?:[^\\']|(?:(?<!\\\\)\\\\\\'))*\\')|(?:\\\"(?:[^\\\"]|(?:(?<!\\\\)\\\\\\\"))*\\\")))*[^()]*\\))*)*)(?:(?:(?::\\s+)|(?<=\\)))(?:(?:(?:(?:#[\\w-]+)|(?:\\.[\\w-]+))|(?:(?:[#!]\\{[^}]*\\})|(?:\\w(?:(?:[\\w:-]+[\\w-])|(?:[\\w-]*)))))(?:(?:#[\\w-]+)|(?:\\.[\\w-]+)|(?:\\((?:[^()\\'\\\"]*(?:(?:\\'(?:[^\\']|(?:(?<!\\\\)\\\\\\'))*\\')|(?:\\\"(?:[^\\\"]|(?:(?<!\\\\)\\\\\\\"))*\\\")))*[^()]*\\))*)*))*)\\.$)(?:(?:(#[\\w-]+)|(\\.[\\w-]+))|((?:[#!]\\{[^}]*\\})|(?:\\w(?:(?:[\\w:-]+[\\w-])|(?:[\\w-]*)))))",
+			"beginCaptures": {
+				"2": {
+					"name": "constant.id.tag.bpmos"
+				},
+				"3": {
+					"name": "constant.language.js"
+				},
+				"4": {
+					"name": "meta.tag.other entity.name.tag.bpmos"
+				}
+			},
+			"comment": "Generated from dot_block_tag.py",
+			"end": "^(?!(\\1\\s)|\\s*$)",
+			"patterns": [
+				{
+					"include": "#tag_attributes"
+				},
+				{
+					"include": "#complete_tag"
+				},
+				{
+					"begin": "^(?=.)",
+					"end": "$",
+					"name": "text.block.bpmos",
+					"patterns": [
+						{
+							"include": "#inline_bpmos"
+						},
+						{
+							"include": "#embedded_html"
+						},
+						{
+							"include": "#html_entity"
+						},
+						{
+							"include": "#interpolated_value"
+						},
+						{
+							"include": "#interpolated_error"
+						}
+					]
+				}
+			]
+		},
+		{
+			"begin": "^\\s*",
+			"comment": "All constructs that generally span a single line starting with any number of white-spaces.",
+			"end": "$",
+			"patterns": [
+				{
+					"include": "#inline_bpmos"
+				},
+				{
+					"include": "#blocks_and_includes"
+				},
+				{
+					"include": "#unbuffered_code"
+				},
+				{
+					"include": "#mixin_definition"
+				},
+				{
+					"include": "#mixin_call"
+				},
+				{
+					"include": "#flow_control"
+				},
+				{
+					"include": "#case_conds"
+				},
+				{
+					"begin": "\\|",
+					"comment": "Tag pipe text line.",
+					"end": "$",
+					"name": "text.block.pipe.bpmos",
+					"patterns": [
+						{
+							"include": "#inline_bpmos"
+						},
+						{
+							"include": "#embedded_html"
+						},
+						{
+							"include": "#html_entity"
+						},
+						{
+							"include": "#interpolated_value"
+						},
+						{
+							"include": "#interpolated_error"
+						}
+					]
+				},
+				{
+					"include": "#printed_expression"
+				},
+				{
+					"begin": "\\G(?=(#[^\\{\\w-])|[^\\w.#])",
+					"comment": "Line starting with characters incompatible with tag name/id/class is standalone text.",
+					"end": "$",
+					"patterns": [
+						{
+							"begin": "</?(?=[!#])",
+							"end": ">|$",
+							"patterns": [
+								{
+									"include": "#inline_bpmos"
+								},
+								{
+									"include": "#interpolated_value"
+								},
+								{
+									"include": "#interpolated_error"
+								}
+							]
+						},
+						{
+							"include": "#inline_bpmos"
+						},
+						{
+							"include": "#embedded_html"
+						},
+						{
+							"include": "#html_entity"
+						},
+						{
+							"include": "#interpolated_value"
+						},
+						{
+							"include": "#interpolated_error"
+						}
+					]
+				},
+				{
+					"include": "#complete_tag"
+				}
+			]
+		}
+	],
+	"repository": {
+		"blocks_and_includes": {
+			"captures": {
+				"1": {
+					"name": "storage.type.import.include.bpmos"
+				},
+				"4": {
+					"name": "variable.control.import.include.bpmos"
+				}
+			},
+			"comment": "Template blocks and includes.",
+			"match": "(extends|include|yield|append|prepend|block( (append|prepend))?)\\s+(.*)$",
+			"name": "meta.first-class.bpmos"
+		},
+		"case_conds": {
+			"begin": "(default|when)((\\s+|(?=:))|$)",
+			"captures": {
+				"1": {
+					"name": "storage.type.function.bpmos"
+				}
+			},
+			"comment": "bpmos case conditionals.",
+			"end": "$",
+			"name": "meta.control.flow.bpmos",
+			"patterns": [
+				{
+					"begin": "\\G(?!:)",
+					"end": "(?=:\\s+)|$",
+					"name": "js.embedded.control.flow.bpmos",
+					"patterns": [
+						{
+							"include": "#case_when_paren"
+						},
+						{
+							"include": "source.js"
+						}
+					]
+				},
+				{
+					"begin": ":\\s+",
+					"end": "$",
+					"name": "tag.case.control.flow.bpmos",
+					"patterns": [
+						{
+							"include": "#complete_tag"
+						}
+					]
+				}
+			]
+		},
+		"case_when_paren": {
+			"begin": "\\(",
+			"end": "\\)",
+			"name": "js.when.control.flow.bpmos",
+			"patterns": [
+				{
+					"include": "#case_when_paren"
+				},
+				{
+					"match": ":",
+					"name": "invalid.illegal.name.tag.bpmos"
+				},
+				{
+					"include": "source.js"
+				}
+			]
+		},
+		"complete_tag": {
+			"begin": "(?=[\\w.#])|(:\\s*)",
+			"end": "(\\.?$)|(?=:.)",
+			"patterns": [
+				{
+					"include": "#blocks_and_includes"
+				},
+				{
+					"include": "#unbuffered_code"
+				},
+				{
+					"include": "#mixin_call"
+				},
+				{
+					"include": "#flow_control"
+				},
+				{
+					"match": "(?<=:)\\w.*$",
+					"name": "invalid.illegal.name.tag.bpmos"
+				},
+				{
+					"include": "#tag_name"
+				},
+				{
+					"include": "#tag_id"
+				},
+				{
+					"include": "#tag_classes"
+				},
+				{
+					"include": "#tag_attributes"
+				},
+				{
+					"include": "#tag_mixin_attributes"
+				},
+				{
+					"captures": {
+						"2": {
+							"name": "invalid.illegal.end.tag.bpmos"
+						},
+						"4": {
+							"name": "invalid.illegal.end.tag.bpmos"
+						}
+					},
+					"match": "((\\.)\\s+$)|((:)\\s*$)"
+				},
+				{
+					"include": "#printed_expression"
+				},
+				{
+					"include": "#tag_text"
+				}
+			]
+		},
+		"embedded_html": {
+			"begin": "(?=<[^>]*>)",
+			"end": "$|(?=>)",
+			"name": "html",
+			"patterns": [
+				{
+					"include": "text.html.basic"
+				},
+				{
+					"include": "#interpolated_value"
+				},
+				{
+					"include": "#interpolated_error"
+				}
+			]
+		},
+		"flow_control": {
+			"begin": "(for|if|else if|else|each|until|while|unless|case)(\\s+|$)",
+			"captures": {
+				"1": {
+					"name": "storage.type.function.bpmos"
+				}
+			},
+			"comment": "bpmos control flow.",
+			"end": "$",
+			"name": "meta.control.flow.bpmos",
+			"patterns": [
+				{
+					"begin": "",
+					"end": "$",
+					"name": "js.embedded.control.flow.bpmos",
+					"patterns": [
+						{
+							"include": "source.js"
+						}
+					]
+				}
+			]
+		},
+		"html_entity": {
+			"patterns": [
+				{
+					"match": "(&)([a-zA-Z0-9]+|#[0-9]+|#x[0-9a-fA-F]+)(;)",
+					"name": "constant.character.entity.html.text.bpmos"
+				},
+				{
+					"match": "[<>&]",
+					"name": "invalid.illegal.html_entity.text.bpmos"
+				}
+			]
+		},
+		"inline_bpmos": {
+			"begin": "(?<!\\\\)(#\\[)",
+			"captures": {
+				"1": {
+					"name": "entity.name.function.bpmos"
+				},
+				"2": {
+					"name": "entity.name.function.bpmos"
+				}
+			},
+			"end": "(\\])",
+			"name": "inline.bpmos",
+			"patterns": [
+				{
+					"include": "#inline_bpmos"
+				},
+				{
+					"include": "#mixin_call"
+				},
+				{
+					"begin": "(?<!\\])(?=[\\w.#])|(:\\s*)",
+					"end": "(?=\\]|(:.)|=|\\s)",
+					"name": "tag.inline.bpmos",
+					"patterns": [
+						{
+							"include": "#tag_name"
+						},
+						{
+							"include": "#tag_id"
+						},
+						{
+							"include": "#tag_classes"
+						},
+						{
+							"include": "#tag_attributes"
+						},
+						{
+							"include": "#tag_mixin_attributes"
+						},
+						{
+							"include": "#inline_bpmos"
+						},
+						{
+							"match": "\\[",
+							"name": "invalid.illegal.tag.bpmos"
+						}
+					]
+				},
+				{
+					"include": "#unbuffered_code"
+				},
+				{
+					"include": "#printed_expression"
+				},
+				{
+					"match": "\\[",
+					"name": "invalid.illegal.tag.bpmos"
+				},
+				{
+					"include": "#inline_bpmos_text"
+				}
+			]
+		},
+		"inline_bpmos_text": {
+			"begin": "",
+			"end": "(?=\\])",
+			"patterns": [
+				{
+					"begin": "\\[",
+					"end": "\\]",
+					"patterns": [
+						{
+							"include": "#inline_bpmos_text"
+						}
+					]
+				},
+				{
+					"include": "#inline_bpmos"
+				},
+				{
+					"include": "#embedded_html"
+				},
+				{
+					"include": "#html_entity"
+				},
+				{
+					"include": "#interpolated_value"
+				},
+				{
+					"include": "#interpolated_error"
+				}
+			]
+		},
+		"interpolated_error": {
+			"match": "(?<!\\\\)[#!]\\{(?=[^}]*$)",
+			"name": "invalid.illegal.tag.bpmos"
+		},
+		"interpolated_value": {
+			"begin": "(?<!\\\\)[#!]\\{(?=.*?\\})",
+			"end": "\\}",
+			"name": "string.interpolated.bpmos",
+			"patterns": [
+				{
+					"match": "{",
+					"name": "invalid.illegal.tag.bpmos"
+				},
+				{
+					"include": "source.js"
+				}
+			]
+		},
+		"js_braces": {
+			"begin": "\\{",
+			"end": "\\}",
+			"patterns": [
+				{
+					"include": "#js_braces"
+				},
+				{
+					"include": "source.js"
+				}
+			]
+		},
+		"js_brackets": {
+			"begin": "\\[",
+			"end": "\\]",
+			"patterns": [
+				{
+					"include": "#js_brackets"
+				},
+				{
+					"include": "source.js"
+				}
+			]
+		},
+		"js_parens": {
+			"begin": "\\(",
+			"end": "\\)",
+			"patterns": [
+				{
+					"include": "#js_parens"
+				},
+				{
+					"include": "source.js"
+				}
+			]
+		},
+		"mixin_call": {
+			"begin": "((?:mixin\\s+)|\\+)([\\w-]+)",
+			"beginCaptures": {
+				"1": {
+					"name": "storage.type.function.bpmos"
+				},
+				"2": {
+					"name": "meta.tag.other entity.name.function.bpmos"
+				}
+			},
+			"end": "(?!\\()|$",
+			"patterns": [
+				{
+					"begin": "(?<!\\))\\(",
+					"end": "\\)",
+					"name": "args.mixin.bpmos",
+					"patterns": [
+						{
+							"include": "#js_parens"
+						},
+						{
+							"include": "#string"
+						},
+						{
+							"captures": {
+								"1": {
+									"name": "meta.tag.other entity.other.attribute-name.tag.bpmos"
+								}
+							},
+							"match": "([^\\s(),=/]+)\\s*=\\s*"
+						},
+						{
+							"include": "source.js"
+						}
+					]
+				},
+				{
+					"include": "#tag_attributes"
+				}
+			]
+		},
+		"mixin_definition": {
+			"captures": {
+				"1": {
+					"name": "storage.type.function.bpmos"
+				},
+				"2": {
+					"name": "meta.tag.other entity.name.function.bpmos"
+				},
+				"3": {
+					"name": "punctuation.definition.parameters.begin.js"
+				},
+				"4": {
+					"name": "variable.parameter.function.js"
+				},
+				"5": {
+					"name": "punctuation.definition.parameters.begin.js"
+				}
+			},
+			"match": "(mixin\\s+)([\\w-]+)(?:(\\()\\s*((?:[a-zA-Z_]\\w*\\s*)(?:,\\s*[a-zA-Z_]\\w*\\s*)*)(\\)))?$"
+		},
+		"printed_expression": {
+			"begin": "(!?\\=)\\s*",
+			"captures": {
+				"1": {
+					"name": "constant"
+				}
+			},
+			"end": "(?=\\])|$",
+			"name": "source.js",
+			"patterns": [
+				{
+					"include": "#js_brackets"
+				},
+				{
+					"include": "source.js"
+				}
+			]
+		},
+		"string": {
+			"begin": "(['\"])",
+			"end": "(?<!\\\\)\\1",
+			"name": "string.quoted.bpmos",
+			"patterns": [
+				{
+					"match": "\\\\((x[0-9a-fA-F]{2})|(u[0-9]{4})|.)",
+					"name": "constant.character.quoted.bpmos"
+				},
+				{
+					"include": "#interpolated_value"
+				},
+				{
+					"include": "#interpolated_error"
+				}
+			]
+		},
+		"tag_attribute_name": {
+			"captures": {
+				"1": {
+					"name": "entity.other.attribute-name.tag.bpmos"
+				}
+			},
+			"match": "([^\\s(),=/!]+)\\s*"
+		},
+		"tag_attribute_name_paren": {
+			"begin": "\\(\\s*",
+			"end": "\\)",
+			"name": "entity.other.attribute-name.tag.bpmos",
+			"patterns": [
+				{
+					"include": "#tag_attribute_name_paren"
+				},
+				{
+					"include": "#tag_attribute_name"
+				}
+			]
+		},
+		"tag_attributes": {
+			"begin": "(\\(\\s*)",
+			"captures": {
+				"1": {
+					"name": "constant.name.attribute.tag.bpmos"
+				}
+			},
+			"end": "(\\))",
+			"name": "meta.tag.other",
+			"patterns": [
+				{
+					"include": "#tag_attribute_name_paren"
+				},
+				{
+					"include": "#tag_attribute_name"
+				},
+				{
+					"match": "!(?!=)",
+					"name": "invalid.illegal.tag.bpmos"
+				},
+				{
+					"begin": "=\\s*",
+					"end": "$|(?=,|(?:\\s+[^!%&*-+~|<>:?/])|\\))",
+					"name": "attribute_value",
+					"patterns": [
+						{
+							"include": "#string"
+						},
+						{
+							"include": "#js_parens"
+						},
+						{
+							"include": "#js_brackets"
+						},
+						{
+							"include": "#js_braces"
+						},
+						{
+							"include": "source.js"
+						}
+					]
+				},
+				{
+					"begin": "(?<=[%&*-+~|<>:?/])\\s+",
+					"end": "$|(?=,|(?:\\s+[^!%&*-+~|<>:?/])|\\))",
+					"name": "attribute_value2",
+					"patterns": [
+						{
+							"include": "#string"
+						},
+						{
+							"include": "#js_parens"
+						},
+						{
+							"include": "#js_brackets"
+						},
+						{
+							"include": "#js_braces"
+						},
+						{
+							"include": "source.js"
+						}
+					]
+				}
+			]
+		},
+		"tag_classes": {
+			"captures": {
+				"1": {
+					"name": "invalid.illegal.tag.bpmos"
+				}
+			},
+			"match": "\\.([^\\w-])?[\\w-]*",
+			"name": "constant.language.js"
+		},
+		"tag_id": {
+			"match": "#[\\w-]+",
+			"name": "constant.id.tag.bpmos"
+		},
+		"tag_mixin_attributes": {
+			"begin": "(&attributes\\()",
+			"captures": {
+				"1": {
+					"name": "entity.name.function.bpmos"
+				}
+			},
+			"end": "(\\))",
+			"name": "meta.tag.other",
+			"patterns": [
+				{
+					"match": "attributes(?=\\))",
+					"name": "storage.type.keyword.bpmos"
+				},
+				{
+					"include": "source.js"
+				}
+			]
+		},
+		"tag_name": {
+			"begin": "([#!]\\{(?=.*?\\}))|(\\w(([\\w:-]+[\\w-])|([\\w-]*)))",
+			"end": "(\\G(?<!\\5[^\\w-]))|\\}|$",
+			"name": "meta.tag.other entity.name.tag.bpmos",
+			"patterns": [
+				{
+					"begin": "\\G(?<=\\{)",
+					"end": "(?=\\})",
+					"name": "meta.tag.other entity.name.tag.bpmos",
+					"patterns": [
+						{
+							"match": "{",
+							"name": "invalid.illegal.tag.bpmos"
+						},
+						{
+							"include": "source.js"
+						}
+					]
+				}
+			]
+		},
+		"tag_text": {
+			"begin": "(?=.)",
+			"end": "$",
+			"patterns": [
+				{
+					"include": "#inline_bpmos"
+				},
+				{
+					"include": "#embedded_html"
+				},
+				{
+					"include": "#html_entity"
+				},
+				{
+					"include": "#interpolated_value"
+				},
+				{
+					"include": "#interpolated_error"
+				}
+			]
+		},
+		"unbuffered_code": {
+			"begin": "(-|(([a-zA-Z0-9_]+)\\s+=))",
+			"beginCaptures": {
+				"3": {
+					"name": "variable.parameter.javascript.embedded.bpmos"
+				}
+			},
+			"comment": "name = function() {}",
+			"end": "(?=\\])|$",
+			"name": "source.js",
+			"patterns": [
+				{
+					"include": "#js_brackets"
+				},
+				{
+					"include": "source.js"
+				}
+			]
+		}
+	},
+	"scopeName": "text.bpmos",
+	"uuid": "eee6ba25-6ac2-4f7e-9c70-cddf2bd3448b",
+	"version": "https://github.com/davidrios/bpmos-tmbundle/commit/7c1304aa5a0d916a93fd296d3dd994219ecdc90f"
+}
